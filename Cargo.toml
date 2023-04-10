@@ -25,7 +25,8 @@ members = [
   # "vendor/bevy_asset_loader/bevy_asset_loader",
   # , "vendor/bevy/crates/*"
   "wgpu/dependencies",
-  "wgpu/surface"
+  "wgpu/surface",
+  "wgpu/pipeline"
 ]
 
 resolver = "2"
