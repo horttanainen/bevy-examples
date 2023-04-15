@@ -55,3 +55,4 @@ winit = "0.28.3"
 pollster = "0.3.0"
 bytemuck = {version = "1.13.1", features = ['derive'] }
 image = "0.24.6"
+anyhow = "1.0.70"
