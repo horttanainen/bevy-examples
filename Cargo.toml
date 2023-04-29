@@ -29,6 +29,7 @@ members = [
   "wgpu/pipeline",
   "wgpu/buffers",
   "wgpu/textures",
+  "wgpu/camera"
 ]
 
 resolver = "2"
@@ -56,3 +57,4 @@ pollster = "0.3.0"
 bytemuck = {version = "1.13.1", features = ['derive'] }
 image = "0.24.6"
 anyhow = "1.0.70"
+cgmath = "0.18.0"
