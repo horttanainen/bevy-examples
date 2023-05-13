@@ -47,9 +47,30 @@ impl Texture {
 
         Self { texture, view, sampler }
     }
-}
 
-impl Texture {
+     pub fn create_depth_texture_non_comparison_sampler(
+        device: &wgpu::Device,
+        config: &wgpu::SurfaceConfiguration,
+        label: &str,
+    ) -> Self {
+
+        let mut texture: Texture = Self::create_depth_texture(device, config, label);
+
+        texture.sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            address_mode_u: wgpu::AddressMode::ClampToEdge,
+            address_mode_v: wgpu::AddressMode::ClampToEdge,
+            address_mode_w: wgpu::AddressMode::ClampToEdge,
+            mag_filter: wgpu::FilterMode::Nearest,
+            min_filter: wgpu::FilterMode::Nearest,
+            mipmap_filter: wgpu::FilterMode::Nearest,
+            compare: None,
+            lod_min_clamp: 0.0,
+            lod_max_clamp: 100.0,
+            ..Default::default()
+        });
+
+        texture
+    }
 
     pub fn from_bytes(
         device: &wgpu::Device,

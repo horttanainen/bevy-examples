@@ -1,5 +1,5 @@
 use winit::event::*;
-use crate::Camera;
+use crate::camera::Camera;
 
 pub struct CameraController {
     speed: f32,
