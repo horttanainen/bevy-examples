@@ -1601,6 +1601,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "depth"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "cgmath",
+ "env_logger",
+ "image",
+ "pollster",
+ "wgpu",
+ "winit",
+]
+
+[[package]]
 name = "dirs"
 version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

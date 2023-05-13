@@ -30,7 +30,8 @@ members = [
   "wgpu/buffers",
   "wgpu/textures",
   "wgpu/camera",
-  "wgpu/instancing"
+  "wgpu/instancing",
+  "wgpu/depth"
 ]
 
 resolver = "2"
