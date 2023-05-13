@@ -29,7 +29,8 @@ members = [
   "wgpu/pipeline",
   "wgpu/buffers",
   "wgpu/textures",
-  "wgpu/camera"
+  "wgpu/camera",
+  "wgpu/instancing"
 ]
 
 resolver = "2"

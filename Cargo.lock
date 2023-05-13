@@ -2300,6 +2300,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "instancing"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "cgmath",
+ "env_logger",
+ "image",
+ "pollster",
+ "wgpu",
+ "winit",
+]
+
+[[package]]
 name = "instant"
 version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
