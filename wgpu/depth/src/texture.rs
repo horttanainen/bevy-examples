@@ -109,7 +109,7 @@ impl Texture {
                 // TEXTURE_BINDING tells wgpu that we want to use this texture in shaders
                 // COPY_DST means that we want to copy data to this texture
                 usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-                label: Some("diffuse_texture"),
+                label,
                 // This is the same as with the SurfaceConfig. It
                 // specifies what texture formats can be used to
                 // create TextureViews for this texture. The base

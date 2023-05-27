@@ -17,6 +17,10 @@ mod camera_uniform;
 mod rotation_uniform;
 mod vertex;
 mod state;
+mod camera_state;
+mod texture_state;
+mod rotation_state;
+mod render_pipeline;
 
 const NUM_INSTANCES_PER_ROW: u32 = 100;
 const INSTANCE_DISPLACEMENT: cgmath::Vector3<f32> = cgmath::Vector3::new(
@@ -80,6 +84,14 @@ pub async fn run() {
                             },
                         ..
                     } => *control_flow = ControlFlow::Exit,
+                    WindowEvent::KeyboardInput {
+                        input: KeyboardInput {
+                            state: ElementState::Pressed,
+                            virtual_keycode: Some(VirtualKeyCode::Space),
+                            ..
+                        },
+                        ..
+                    }  => state.toggle_shadow(),
                     WindowEvent::CursorMoved { position, .. } => {
                         state.color = wgpu::Color {
                             r: position.x / state.size.width as f64,
