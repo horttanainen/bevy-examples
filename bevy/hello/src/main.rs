@@ -23,7 +23,6 @@ fn setup(
     commands.spawn(MaterialMesh2dBundle {
         mesh: meshes.add(shape::Quad::new(Vec2 { x: 800.0, y: 500.0 }).into()).into(),
         material: materials.add(CustomMaterial {
-            color: Color::BLUE,
         }),
         transform: Transform::from_translation(Vec3::new(-150., 0., 0.)),
         ..default()
@@ -40,6 +39,4 @@ impl Material2d for CustomMaterial {
 #[derive(AsBindGroup, TypeUuid, Debug, Clone)]
 #[uuid = "f690fdae-d598-45ab-8225-97e2a3f056e0"]
 pub struct CustomMaterial {
-    #[uniform(0)]
-    color: Color,
 }
