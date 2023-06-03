@@ -31,7 +31,8 @@ members = [
   "wgpu/textures",
   "wgpu/camera",
   "wgpu/instancing",
-  "wgpu/depth"
+  "wgpu/depth",
+  "bevy/hello"
 ]
 
 resolver = "2"
