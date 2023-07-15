@@ -7,7 +7,7 @@ use itertools::Itertools;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_startup_system(setup)
+        .add_systems(Startup, setup)
         .run();
 }
 
@@ -20,7 +20,7 @@ fn setup(
 
      let mut land = Mesh::from(Land {
         size: 2000.0,
-        num_vertices: 10,
+        num_vertices: 100,
     });
     if let Some(VertexAttributeValues::Float32x3(
         positions,
