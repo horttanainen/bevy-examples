@@ -2,28 +2,6 @@ license = "MIT OR Apache-2.0"
 
 [workspace]
 members = [
-  # "examples/*",
-  # "examples/candy-cane",
-  # "examples/cartoon-water",
-  # "examples/compute-3d",
-  # "examples/compute-with-time",
-  # "examples/cube-wave",
-  "examples/dissolve-sphere-standard-material-extensions",
-  "examples/fresnel-effect",
-  # "examples/infinite-tunnel",
-  # "examples/pointcloud",
-  "examples/pressure-wave-sphere",
-  "examples/rotating-column",
-  "examples/shader-rgb-worldspace-cube",
-  "examples/shader-test-001",
-  "examples/shield-spheres",
-  "examples/shield-with-depth",
-  # "examples/spacecraft-noiseland",
-  "examples/standard-material-quixel-megascan",
-  "libs/*",
-  # "vendor/bevy_asset_loader/bevy_asset_loader_derive",
-  # "vendor/bevy_asset_loader/bevy_asset_loader",
-  # , "vendor/bevy/crates/*"
   "wgpu/dependencies",
   "wgpu/surface",
   "wgpu/pipeline",
@@ -49,9 +27,6 @@ opt-level = 3
 bevy = { version = "0.11", features = ["dynamic_linking"] }
 bevy-inspector-egui = "0.18.1"
 bevy_asset_loader = "0.17.0"
-bevy_basic_camera = { path = "./libs/bevy_basic_camera" }
-bevy_shader_utils = { path = "./libs/bevy_shader_utils" }
-bevy_prepass_debug = { path = "./libs/bevy_prepass_debug" }
 
 env_logger = "0.10.0"
 wgpu = "0.15.1"
