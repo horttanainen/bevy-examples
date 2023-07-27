@@ -2733,6 +2733,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "gpucomputehello"
+version = "0.1.0"
+dependencies = [
+ "bevy 0.11.0",
+ "bevy-inspector-egui",
+ "itertools",
+ "rand",
+]
+
+[[package]]
 name = "grid"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
