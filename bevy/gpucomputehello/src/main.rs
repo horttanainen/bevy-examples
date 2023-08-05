@@ -8,12 +8,13 @@ use bevy::{
         render_graph::{self, RenderGraph},
         render_resource::{
             BindGroup, BindGroupDescriptor, BindGroupEntry, BindGroupLayout,
-            BindGroupLayoutDescriptor, BindGroupLayoutEntry, BindingResource, BindingType,
-            CachedComputePipelineId, CachedPipelineState, ComputePipelineDescriptor, Extent3d,
+            BindGroupLayoutDescriptor, BindGroupLayoutEntry, BindingResource, BindingType, Buffer,
+            BufferBindingType, BufferDescriptor, BufferSize, BufferUsages, CachedComputePipelineId,
+            CachedPipelineState, ComputePassDescriptor, ComputePipelineDescriptor, Extent3d,
             PipelineCache, ShaderStages, StorageTextureAccess, TextureDimension, TextureFormat,
-            TextureUsages, TextureViewDimension, ComputePassDescriptor,
+            TextureUsages, TextureViewDimension,
         },
-        renderer::{RenderDevice, RenderContext},
+        renderer::{RenderContext, RenderDevice, RenderQueue},
         texture::ImageSampler,
         Render, RenderApp, RenderSet,
     },
@@ -24,7 +25,6 @@ const SIZE: (u32, u32) = (1280, 720);
 const WORKGROUP_SIZE: u32 = 8;
 
 fn main() {
-
     let res = WindowResolution::new(SIZE.0 as f32, SIZE.1 as f32);
 
     App::new()
@@ -65,10 +65,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     let image = create_texture(&mut images);
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            custom_size: Some(Vec2::new(
-                SIZE.0 as f32 * 3.0,
-                SIZE.0 as f32 * 3.0,
-            )),
+            custom_size: Some(Vec2::new(SIZE.0 as f32 * 3.0, SIZE.0 as f32 * 3.0)),
             ..default()
         },
         texture: image.clone(),
@@ -88,9 +85,11 @@ impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         // Extract the game of life image resource from the main world into the render world
         // for operation on by the compute shader and display on the sprite.
-        app.add_plugins(ExtractResourcePlugin::<HelloImage>::default());
+        app.add_plugins(ExtractResourcePlugin::<HelloImage>::default())
+            .add_plugins(ExtractResourcePlugin::<ExtractedTime>::default());
         let render_app = app.sub_app_mut(RenderApp);
         render_app.add_systems(Render, queue_bind_group.in_set(RenderSet::Queue));
+        render_app.add_systems(Render, prepare_time.in_set(RenderSet::Prepare));
 
         let mut render_graph = render_app.world.resource_mut::<RenderGraph>();
         render_graph.add_node("hello_node", HelloNode::default());
@@ -98,8 +97,22 @@ impl Plugin for HelloPlugin {
     }
 
     fn finish(&self, app: &mut App) {
+        let render_device = app.world.resource::<RenderDevice>();
+
+        let buffer = render_device.create_buffer(&BufferDescriptor {
+            label: None,
+            size: std::mem::size_of::<f32>() as u64,
+            usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
         let render_app = app.sub_app_mut(RenderApp);
-        render_app.init_resource::<HelloPipeline>();
+        render_app
+            .init_resource::<HelloPipeline>()
+            .insert_resource(TimeMeta {
+                buffer,
+                bind_group: None,
+            });
     }
 }
 
@@ -112,15 +125,22 @@ fn queue_bind_group(
     gpu_images: Res<RenderAssets<Image>>,
     hello_image: Res<HelloImage>,
     render_device: Res<RenderDevice>,
+    time_meta: ResMut<TimeMeta>,
 ) {
     let view = &gpu_images[&hello_image.0];
     let bind_group = render_device.create_bind_group(&BindGroupDescriptor {
         label: None,
         layout: &pipeline.texture_bind_group_layout,
-        entries: &[BindGroupEntry {
-            binding: 0,
-            resource: BindingResource::TextureView(&view.texture_view),
-        }],
+        entries: &[
+            BindGroupEntry {
+                binding: 0,
+                resource: BindingResource::TextureView(&view.texture_view),
+            },
+            BindGroupEntry {
+                binding: 1,
+                resource: time_meta.buffer.as_entire_binding(),
+            },
+        ],
     });
     commands.insert_resource(HelloImageBindGroup(bind_group));
 }
@@ -134,12 +154,11 @@ pub struct HelloPipeline {
 
 impl FromWorld for HelloPipeline {
     fn from_world(world: &mut World) -> Self {
-        let texture_bind_group_layout =
-            world
-                .resource::<RenderDevice>()
-                .create_bind_group_layout(&BindGroupLayoutDescriptor {
-                    label: None,
-                    entries: &[BindGroupLayoutEntry {
+        let texture_bind_group_layout = world.resource::<RenderDevice>().create_bind_group_layout(
+            &BindGroupLayoutDescriptor {
+                label: None,
+                entries: &[
+                    BindGroupLayoutEntry {
                         binding: 0,
                         visibility: ShaderStages::COMPUTE,
                         ty: BindingType::StorageTexture {
@@ -148,8 +167,20 @@ impl FromWorld for HelloPipeline {
                             view_dimension: TextureViewDimension::D2,
                         },
                         count: None,
-                    }],
-                });
+                    },
+                    BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: ShaderStages::COMPUTE,
+                        ty: BindingType::Buffer {
+                            ty: BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: BufferSize::new(std::mem::size_of::<f32>() as u64),
+                        },
+                        count: None,
+                    },
+                ],
+            },
+        );
         let shader = world.resource::<AssetServer>().load("shaders/hello.wgsl");
         let pipeline_cache = world.resource::<PipelineCache>();
         let init_pipeline = pipeline_cache.queue_compute_pipeline(ComputePipelineDescriptor {
@@ -257,4 +288,38 @@ impl render_graph::Node for HelloNode {
 
         Ok(())
     }
+}
+
+#[derive(Resource, Default)]
+struct ExtractedTime {
+    seconds_since_startup: f32,
+}
+
+impl ExtractResource for ExtractedTime {
+    type Source = Time;
+
+    fn extract_resource(time: &Self::Source) -> Self {
+        ExtractedTime {
+            seconds_since_startup: time.elapsed_seconds(),
+        }
+    }
+}
+
+#[derive(Resource)]
+struct TimeMeta {
+    buffer: Buffer,
+    bind_group: Option<BindGroup>,
+}
+
+// write the extracted time into the corresponding uniform buffer
+fn prepare_time(
+    time: Res<ExtractedTime>,
+    time_meta: ResMut<TimeMeta>,
+    render_queue: Res<RenderQueue>,
+) {
+    render_queue.write_buffer(
+        &time_meta.buffer,
+        0,
+        bevy::core::cast_slice(&[time.seconds_since_startup]),
+    );
 }
