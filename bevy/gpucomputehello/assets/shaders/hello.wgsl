@@ -7,6 +7,13 @@ struct Time {
 @group(0) @binding(1)
 var<uniform> time: Time;
 
+struct CueBallPos {
+    x: f32,
+    y: f32
+};
+@group(0) @binding(2)
+var<uniform> cue_ball_pos: CueBallPos;
+
 fn hash(value: u32) -> u32 {
     var state = value;
     state = state ^ 2747636419u;
@@ -36,7 +43,9 @@ fn update(@builtin(global_invocation_id) invocation_id: vec3<u32>) {
     let location = vec2<i32>(i32(invocation_id.x), i32(invocation_id.y));
     let cur_color = textureLoad(texture, location);
 
-    let red = randomFloat(u32(f32(invocation_id.y * invocation_id.x) * time.time_since_startup));
+    let distance_from_cue_ball = distance(vec2<f32>(location), vec2(cue_ball_pos.x, cue_ball_pos.y));
+
+    let red = distance_from_cue_ball / 10.0;
     let green = randomFloat(u32(f32(invocation_id.y * invocation_id.x) * (time.time_since_startup + 1.0)));
     let blue = randomFloat(u32(f32(invocation_id.y * invocation_id.x) * (time.time_since_startup - 1.0)));
 
