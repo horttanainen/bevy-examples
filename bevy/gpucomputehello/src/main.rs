@@ -51,8 +51,8 @@ fn setup(
     commands.spawn(SpriteBundle {
         sprite: Sprite {
             custom_size: Some(Vec2::new(
-                CONFIG.size.0 as f32 * 3.0,
-                CONFIG.size.0 as f32 * 3.0,
+                CONFIG.size.0 as f32,
+                CONFIG.size.1 as f32,
             )),
             ..default()
         },
