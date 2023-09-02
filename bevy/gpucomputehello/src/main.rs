@@ -3,10 +3,12 @@ use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::*};
 
 use config::CONFIG;
 use cue_ball::{CueBall, track_cue_ball_position, CueBallPosition, MainCamera};
+use debug::draw_viewport_rect;
 use image::{create_texture, GpuComputeImage};
 use movement::move_cue_ball;
 use plugin::GpuComputePlugin;
 
+mod debug;
 mod bind_group;
 mod config;
 mod image;
@@ -35,7 +37,7 @@ fn main() {
             GpuComputePlugin,
         ))
         .add_systems(Startup, setup)
-        .add_systems(Update, (move_cue_ball, track_cue_ball_position))
+        .add_systems(Update, (move_cue_ball, track_cue_ball_position, draw_viewport_rect))
         .run();
 }
 
