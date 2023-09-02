@@ -5,7 +5,7 @@ pub struct Config {
 }
 
 pub const CONFIG: Config = Config {
-    size: (1280, 720),
+    size: (1280, 1280),
     workgroup_size: 8,
     ball_radius: 10.
 };
