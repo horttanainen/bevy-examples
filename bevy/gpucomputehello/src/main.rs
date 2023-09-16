@@ -1,26 +1,26 @@
-use ball::Ball;
+use ball::{track_ball_position, Ball, BallPosition};
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::*};
 
 use camera::MainCamera;
 use config::CONFIG;
-use cue_ball::{CueBall, track_cue_ball_position, CueBallPosition};
+use cue_ball::{track_cue_ball_position, CueBall, CueBallPosition};
 use debug::draw_viewport_rect;
 use image::{create_texture, GpuComputeImage};
 use movement::move_cue_ball;
 use plugin::GpuComputePlugin;
 
-mod debug;
+mod ball;
 mod bind_group;
+mod camera;
 mod config;
+mod cue_ball;
+mod debug;
 mod image;
+mod movement;
 mod node;
 mod pipeline;
 mod plugin;
 mod time;
-mod movement;
-mod cue_ball;
-mod ball;
-mod camera;
 
 fn main() {
     let res = WindowResolution::new(CONFIG.size.0 as f32, CONFIG.size.1 as f32);
@@ -39,7 +39,15 @@ fn main() {
             GpuComputePlugin,
         ))
         .add_systems(Startup, setup)
-        .add_systems(Update, (move_cue_ball, track_cue_ball_position, draw_viewport_rect))
+        .add_systems(
+            Update,
+            (
+                move_cue_ball,
+                track_cue_ball_position,
+                track_ball_position,
+                draw_viewport_rect,
+            ),
+        )
         .run();
 }
 
@@ -52,10 +60,7 @@ fn setup(
     let image = create_texture(&mut images);
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            custom_size: Some(Vec2::new(
-                CONFIG.size.0 as f32,
-                CONFIG.size.1 as f32,
-            )),
+            custom_size: Some(Vec2::new(CONFIG.size.0 as f32, CONFIG.size.1 as f32)),
             ..default()
         },
         texture: image.clone(),
@@ -65,6 +70,7 @@ fn setup(
     commands.spawn((Camera2dBundle::default(), MainCamera));
     commands.insert_resource(GpuComputeImage(image));
     commands.insert_resource(CueBallPosition::default());
+    commands.insert_resource(BallPosition::default());
 
     commands.spawn((
         MaterialMesh2dBundle {

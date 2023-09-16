@@ -10,6 +10,9 @@ var<uniform> time: Time;
 @group(0) @binding(2)
 var<uniform> cue_ball_pos: vec2<f32>;
 
+@group(0) @binding(3)
+var<uniform> ball_pos: vec2<f32>;
+
 fn hash(value: u32) -> u32 {
     var state = value;
     state = state ^ 2747636419u;
@@ -35,7 +38,7 @@ fn init(@builtin(global_invocation_id) invocation_id: vec3<u32>, @builtin(num_wo
 }
 
 fn is_visible(cue_ball: vec2<f32>, tile: vec2<f32>) -> bool {
-  let blocker = vec2<f32>(1280.0 / 2.0 + 50., 1280.0 / 2.0 - 50.);
+  let blocker = ball_pos;
 
   let blocker_to_cue_ball = cue_ball - blocker;
   let tile_to_blocker = blocker - tile;

@@ -1,8 +1,12 @@
 use bevy::{
-    prelude::*, render::{render_asset::*, renderer::*, render_resource::*},
+    prelude::*,
+    render::{render_asset::*, render_resource::*, renderer::*},
 };
 
-use crate::{pipeline::GpuComputePipeline, image::GpuComputeImage, time::TimeMeta, cue_ball::CueBallBuffer};
+use crate::{
+    ball::BallBuffer, cue_ball::CueBallBuffer, image::GpuComputeImage,
+    pipeline::GpuComputePipeline, time::TimeMeta,
+};
 
 #[derive(Resource)]
 pub struct GpuComputeBindGroup(pub BindGroup);
@@ -14,7 +18,8 @@ pub fn queue_bind_group(
     hello_image: Res<GpuComputeImage>,
     render_device: Res<RenderDevice>,
     time_meta: ResMut<TimeMeta>,
-    cue_ball_meta: ResMut<CueBallBuffer>,
+    cue_ball_buffer: ResMut<CueBallBuffer>,
+    ball_buffer: ResMut<BallBuffer>,
 ) {
     let view = &gpu_images[&hello_image.0];
     let bind_group = render_device.create_bind_group(&BindGroupDescriptor {
@@ -31,10 +36,13 @@ pub fn queue_bind_group(
             },
             BindGroupEntry {
                 binding: 2,
-                resource: cue_ball_meta.0.as_entire_binding(),
+                resource: cue_ball_buffer.0.as_entire_binding(),
+            },
+            BindGroupEntry {
+                binding: 3,
+                resource: ball_buffer.0.as_entire_binding(),
             },
         ],
     });
     commands.insert_resource(GpuComputeBindGroup(bind_group));
 }
-

@@ -44,7 +44,21 @@ impl FromWorld for GpuComputePipeline {
                         ty: BindingType::Buffer {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
-                            min_binding_size: BufferSize::new((std::mem::size_of::<f32>() * 2) as u64),
+                            min_binding_size: BufferSize::new(
+                                (std::mem::size_of::<f32>() * 2) as u64,
+                            ),
+                        },
+                        count: None,
+                    },
+                    BindGroupLayoutEntry {
+                        binding: 3,
+                        visibility: ShaderStages::COMPUTE,
+                        ty: BindingType::Buffer {
+                            ty: BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: BufferSize::new(
+                                (std::mem::size_of::<f32>() * 2) as u64,
+                            ),
                         },
                         count: None,
                     },
@@ -77,4 +91,3 @@ impl FromWorld for GpuComputePipeline {
         }
     }
 }
-
