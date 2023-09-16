@@ -2,7 +2,7 @@ use bevy::{
     prelude::*, render::{render_asset::*, renderer::*, render_resource::*},
 };
 
-use crate::{pipeline::GpuComputePipeline, image::GpuComputeImage, time::TimeMeta, cue_ball::CueBallMeta};
+use crate::{pipeline::GpuComputePipeline, image::GpuComputeImage, time::TimeMeta, cue_ball::CueBallBuffer};
 
 #[derive(Resource)]
 pub struct GpuComputeBindGroup(pub BindGroup);
@@ -14,7 +14,7 @@ pub fn queue_bind_group(
     hello_image: Res<GpuComputeImage>,
     render_device: Res<RenderDevice>,
     time_meta: ResMut<TimeMeta>,
-    cue_ball_meta: ResMut<CueBallMeta>,
+    cue_ball_meta: ResMut<CueBallBuffer>,
 ) {
     let view = &gpu_images[&hello_image.0];
     let bind_group = render_device.create_bind_group(&BindGroupDescriptor {
@@ -31,7 +31,7 @@ pub fn queue_bind_group(
             },
             BindGroupEntry {
                 binding: 2,
-                resource: cue_ball_meta.buffer.as_entire_binding(),
+                resource: cue_ball_meta.0.as_entire_binding(),
             },
         ],
     });

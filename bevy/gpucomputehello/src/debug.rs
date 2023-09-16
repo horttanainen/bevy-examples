@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::cue_ball::MainCamera;
+use crate::camera::MainCamera;
 
 pub fn draw_viewport_rect(mut gizmos: Gizmos, q: Query<&Camera, With<MainCamera>>) {
     let camera = q.single();

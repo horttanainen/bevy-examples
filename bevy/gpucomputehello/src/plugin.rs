@@ -5,7 +5,7 @@ use bevy::{
 
 use crate::{
     bind_group::queue_bind_group,
-    cue_ball::{prepare_cue_ball, CueBallMeta, CueBallPosition},
+    cue_ball::{prepare_cue_ball, CueBallBuffer, CueBallPosition},
     image::GpuComputeImage,
     node::GpuComputeNode,
     pipeline::GpuComputePipeline,
@@ -52,8 +52,6 @@ impl Plugin for GpuComputePlugin {
             .insert_resource(TimeMeta {
                 buffer: time_buffer,
             })
-            .insert_resource(CueBallMeta {
-                buffer: cue_ball_buffer,
-            });
+            .insert_resource(CueBallBuffer(cue_ball_buffer));
     }
 }

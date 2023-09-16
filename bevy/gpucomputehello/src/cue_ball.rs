@@ -3,6 +3,8 @@ use bevy::{
     render::{extract_resource::ExtractResource, render_resource::Buffer, renderer::RenderQueue},
 };
 
+use crate::camera::MainCamera;
+
 #[derive(Resource, Default)]
 pub struct CueBallPosition(Vec2);
 
@@ -18,13 +20,7 @@ impl ExtractResource for CueBallPosition {
 pub struct CueBall;
 
 #[derive(Resource)]
-pub struct CueBallMeta {
-    pub buffer: Buffer,
-}
-
-/// Used to help identify our main camera
-#[derive(Component)]
-pub struct MainCamera;
+pub struct CueBallBuffer(pub Buffer);
 
 pub fn track_cue_ball_position(
     cue_ball: Query<(&mut Transform, With<CueBall>)>,
@@ -44,11 +40,11 @@ pub fn track_cue_ball_position(
 
 pub fn prepare_cue_ball(
     cue_ball: Res<CueBallPosition>,
-    cue_ball_meta: ResMut<CueBallMeta>,
+    cue_ball_meta: ResMut<CueBallBuffer>,
     render_queue: Res<RenderQueue>,
 ) {
     render_queue.write_buffer(
-        &cue_ball_meta.buffer,
+        &cue_ball_meta.0,
         0,
         bevy::core::cast_slice(&[cue_ball.0.x, cue_ball.0.y]),
     );

@@ -1,8 +1,9 @@
 use ball::Ball;
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::*};
 
+use camera::MainCamera;
 use config::CONFIG;
-use cue_ball::{CueBall, track_cue_ball_position, CueBallPosition, MainCamera};
+use cue_ball::{CueBall, track_cue_ball_position, CueBallPosition};
 use debug::draw_viewport_rect;
 use image::{create_texture, GpuComputeImage};
 use movement::move_cue_ball;
@@ -19,6 +20,7 @@ mod time;
 mod movement;
 mod cue_ball;
 mod ball;
+mod camera;
 
 fn main() {
     let res = WindowResolution::new(CONFIG.size.0 as f32, CONFIG.size.1 as f32);
