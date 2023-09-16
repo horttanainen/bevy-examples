@@ -1,15 +1,24 @@
 use bevy::{
-    render::{*, render_resource::*, extract_resource::*, renderer::*, render_graph::*}, prelude::*
+    prelude::*,
+    render::{extract_resource::*, render_graph::*, render_resource::*, renderer::*, *},
 };
 
-use crate::{pipeline::GpuComputePipeline, time::{TimeMeta, ExtractedTime, prepare_time}, image::GpuComputeImage, bind_group::queue_bind_group, node::GpuComputeNode, cue_ball::{prepare_cue_ball, ExtractedCueBall, CueBallMeta}};
+use crate::{
+    bind_group::queue_bind_group,
+    cue_ball::{prepare_cue_ball, CueBallMeta, CueBallPosition},
+    image::GpuComputeImage,
+    node::GpuComputeNode,
+    pipeline::GpuComputePipeline,
+    time::{prepare_time, ExtractedTime, TimeMeta},
+};
 
 pub struct GpuComputePlugin;
 
 impl Plugin for GpuComputePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(ExtractResourcePlugin::<GpuComputeImage>::default())
-            .add_plugins(ExtractResourcePlugin::<ExtractedTime>::default()).add_plugins(ExtractResourcePlugin::<ExtractedCueBall>::default());
+            .add_plugins(ExtractResourcePlugin::<ExtractedTime>::default())
+            .add_plugins(ExtractResourcePlugin::<CueBallPosition>::default());
         let render_app = app.sub_app_mut(RenderApp);
         render_app.add_systems(Render, queue_bind_group.in_set(RenderSet::Queue));
         render_app.add_systems(Render, prepare_time.in_set(RenderSet::Prepare));
@@ -48,4 +57,3 @@ impl Plugin for GpuComputePlugin {
             });
     }
 }
-
