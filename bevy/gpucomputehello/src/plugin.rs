@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    ball::{prepare_ball, BallBuffer, BallPosition},
+    ball::{prepare_balls, BallBuffer, BallPositions},
     bind_group::queue_bind_group,
     cue_ball::{prepare_cue_ball, CueBallBuffer, CueBallPosition},
     image::GpuComputeImage,
@@ -20,12 +20,12 @@ impl Plugin for GpuComputePlugin {
         app.add_plugins(ExtractResourcePlugin::<GpuComputeImage>::default())
             .add_plugins(ExtractResourcePlugin::<ExtractedTime>::default())
             .add_plugins(ExtractResourcePlugin::<CueBallPosition>::default())
-            .add_plugins(ExtractResourcePlugin::<BallPosition>::default());
+            .add_plugins(ExtractResourcePlugin::<BallPositions>::default());
         let render_app = app.sub_app_mut(RenderApp);
         render_app.add_systems(Render, queue_bind_group.in_set(RenderSet::Queue));
         render_app.add_systems(Render, prepare_time.in_set(RenderSet::Prepare));
         render_app.add_systems(Render, prepare_cue_ball.in_set(RenderSet::Prepare));
-        render_app.add_systems(Render, prepare_ball.in_set(RenderSet::Prepare));
+        render_app.add_systems(Render, prepare_balls.in_set(RenderSet::Prepare));
 
         let mut render_graph = render_app.world.resource_mut::<RenderGraph>();
         render_graph.add_node("hello_node", GpuComputeNode::default());

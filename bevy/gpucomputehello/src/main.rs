@@ -1,4 +1,4 @@
-use ball::{track_ball_position, Ball, BallPosition};
+use ball::{track_ball_positions, Ball, BallPositions};
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::*};
 
 use camera::MainCamera;
@@ -44,7 +44,7 @@ fn main() {
             (
                 move_cue_ball,
                 track_cue_ball_position,
-                track_ball_position,
+                track_ball_positions,
                 draw_viewport_rect,
             ),
         )
@@ -70,7 +70,7 @@ fn setup(
     commands.spawn((Camera2dBundle::default(), MainCamera));
     commands.insert_resource(GpuComputeImage(image));
     commands.insert_resource(CueBallPosition::default());
-    commands.insert_resource(BallPosition::default());
+    commands.insert_resource(BallPositions::default());
 
     commands.spawn((
         MaterialMesh2dBundle {
