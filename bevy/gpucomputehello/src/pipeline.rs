@@ -45,7 +45,7 @@ impl FromWorld for GpuComputePipeline {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
                             min_binding_size: BufferSize::new(
-                                (std::mem::size_of::<f32>() * 2) as u64,
+                                (std::mem::size_of::<Vec2>()) as u64,
                             ),
                         },
                         count: None,
@@ -57,7 +57,7 @@ impl FromWorld for GpuComputePipeline {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
                             min_binding_size: BufferSize::new(
-                                (std::mem::size_of::<f32>() * 2) as u64,
+                                (std::mem::size_of::<Vec4>() * 2) as u64,
                             ),
                         },
                         count: None,

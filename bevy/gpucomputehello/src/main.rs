@@ -95,4 +95,16 @@ fn setup(
         },
         Ball,
     ));
+
+    commands.spawn((
+        MaterialMesh2dBundle {
+            mesh: meshes
+                .add(shape::Circle::new(CONFIG.ball_radius).into())
+                .into(),
+            material: materials.add(ColorMaterial::from(Color::BLUE)),
+            transform: Transform::from_translation(Vec3::new(-50., -50., 1.)),
+            ..default()
+        },
+        Ball,
+    ));
 }

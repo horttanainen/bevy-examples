@@ -6,7 +6,7 @@ use bevy::{
 use crate::camera::MainCamera;
 
 #[derive(Resource, Default)]
-pub struct BallPositions(Vec<Vec2>);
+pub struct BallPositions(Vec<Vec4>);
 
 impl ExtractResource for BallPositions {
     type Source = BallPositions;
@@ -28,13 +28,13 @@ pub fn track_ball_positions(
     camera_q: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
 ) {
     let (camera, camera_transform) = camera_q.single();
+    ball_positions.0.clear();
 
     for (transform, _) in &balls {
         let view_pos = camera
             .world_to_viewport(camera_transform, transform.translation)
             .unwrap();
-        ball_positions.0.clear();
-        ball_positions.0.push(view_pos);
+        ball_positions.0.push(Vec4::new(view_pos.x, view_pos.y, 0., 0.));
     }
 }
 
@@ -46,6 +46,6 @@ pub fn prepare_balls(
     render_queue.write_buffer(
         &ball_buffer.0,
         0,
-        bevy::core::cast_slice(ball_positions.0.as_slice()),
+        bevy::core::cast_slice(&ball_positions.0),
     );
 }

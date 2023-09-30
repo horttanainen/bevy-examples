@@ -10,8 +10,9 @@ var<uniform> time: Time;
 @group(0) @binding(2)
 var<uniform> cue_ball_pos: vec2<f32>;
 
+
 @group(0) @binding(3)
-var<uniform> ball_pos: vec2<f32>;
+var<uniform> balls: array<vec4<f32>, 2>;
 
 fn hash(value: u32) -> u32 {
     var state = value;
@@ -37,9 +38,7 @@ fn init(@builtin(global_invocation_id) invocation_id: vec3<u32>, @builtin(num_wo
     textureStore(texture, location, color);
 }
 
-fn is_visible(cue_ball: vec2<f32>, tile: vec2<f32>) -> bool {
-  let blocker = ball_pos;
-
+fn is_visible(cue_ball: vec2<f32>, blocker: vec2<f32>, tile: vec2<f32>) -> bool {
   let blocker_to_cue_ball = cue_ball - blocker;
   let tile_to_blocker = blocker - tile;
   let tile_to_cue_ball = cue_ball - tile;
@@ -71,7 +70,7 @@ fn update(@builtin(global_invocation_id) invocation_id: vec3<u32>) {
     let distance_from_cue_ball = distance(vec2<f32>(coordinate), cue_ball_pos) / 1280.0;
 
     var color = vec4<f32>(0.0, 1.0, 0.0, 1.0);
-    if (!is_visible(cue_ball_pos, vec2<f32>(coordinate))) {
+    if (!is_visible(cue_ball_pos, balls[0].xy, vec2<f32>(coordinate)) || !is_visible(cue_ball_pos, balls[1].xy, vec2<f32>(coordinate))) {
       let red = randomFloat(u32(f32(invocation_id.y * invocation_id.x) * (time.time_since_startup + 2.0)));
       let green = randomFloat(u32(f32(invocation_id.y * invocation_id.x) * (time.time_since_startup + 1.0)));
       let blue = randomFloat(u32(f32(invocation_id.y * invocation_id.x) * (time.time_since_startup - 1.0)));
