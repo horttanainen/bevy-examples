@@ -8,6 +8,7 @@ use debug::draw_viewport_rect;
 use image::{create_texture, GpuComputeImage};
 use movement::move_cue_ball;
 use plugin::GpuComputePlugin;
+use rand::random;
 
 mod ball;
 mod bind_group;
@@ -84,27 +85,19 @@ fn setup(
         CueBall,
     ));
 
-    commands.spawn((
-        MaterialMesh2dBundle {
-            mesh: meshes
-                .add(shape::Circle::new(CONFIG.ball_radius).into())
-                .into(),
-            material: materials.add(ColorMaterial::from(Color::BLUE)),
-            transform: Transform::from_translation(Vec3::ONE * 50.),
-            ..default()
-        },
-        Ball,
-    ));
+    for _ in 0..CONFIG.number_of_balls {
+        let mut position = Vec3::new(random::<f32>() - 0.5, random::<f32>() - 0.5, 0.) * 500.;
+        position.z = 1.;
+        commands.spawn((
+            MaterialMesh2dBundle {
+                mesh: meshes
+                    .add(shape::Circle::new(CONFIG.ball_radius).into())
+                    .into(),
+                material: materials.add(ColorMaterial::from(Color::RED)),
+                transform: Transform::from_translation(position), ..default()
+            },
+            Ball,
+        ));
+    }
 
-    commands.spawn((
-        MaterialMesh2dBundle {
-            mesh: meshes
-                .add(shape::Circle::new(CONFIG.ball_radius).into())
-                .into(),
-            material: materials.add(ColorMaterial::from(Color::BLUE)),
-            transform: Transform::from_translation(Vec3::new(-50., -50., 1.)),
-            ..default()
-        },
-        Ball,
-    ));
 }

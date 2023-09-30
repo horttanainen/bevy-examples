@@ -5,6 +5,8 @@ use bevy::{
     render::{render_resource::*, renderer::*},
 };
 
+use crate::config::CONFIG;
+
 #[derive(Resource)]
 pub struct GpuComputePipeline {
     pub texture_bind_group_layout: BindGroupLayout,
@@ -57,7 +59,7 @@ impl FromWorld for GpuComputePipeline {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
                             min_binding_size: BufferSize::new(
-                                (std::mem::size_of::<Vec4>() * 2) as u64,
+                                (std::mem::size_of::<Vec4>() * CONFIG.number_of_balls) as u64,
                             ),
                         },
                         count: None,

@@ -10,7 +10,7 @@ use crate::{
     image::GpuComputeImage,
     node::GpuComputeNode,
     pipeline::GpuComputePipeline,
-    time::{prepare_time, ExtractedTime, TimeMeta},
+    time::{prepare_time, ExtractedTime, TimeMeta}, config::CONFIG,
 };
 
 pub struct GpuComputePlugin;
@@ -51,7 +51,7 @@ impl Plugin for GpuComputePlugin {
 
         let ball_buffer = render_device.create_buffer(&BufferDescriptor {
             label: None,
-            size: (std::mem::size_of::<Vec4>() * 2) as u64,
+            size: (std::mem::size_of::<Vec4>() * CONFIG.number_of_balls) as u64,
             usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
