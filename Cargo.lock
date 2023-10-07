@@ -4152,6 +4152,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sand"
+version = "0.1.0"
+dependencies = [
+ "bevy 0.11.0",
+ "bevy-inspector-egui",
+ "itertools",
+ "rand",
+]
+
+[[package]]
 name = "scoped-tls"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
