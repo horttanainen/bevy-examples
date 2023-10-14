@@ -8,7 +8,7 @@ use crate::{
     image::SandImage,
     node::SandNode,
     pipeline::SandPipeline,
-    time::{prepare_time, ExtractedTime, TimeMeta}, config::CONFIG,
+    time::{prepare_time, ExtractedTime, TimeMeta},
 };
 
 pub struct SandPlugin;

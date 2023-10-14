@@ -16,6 +16,13 @@ mod pipeline;
 mod plugin;
 mod time;
 
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States)]
+pub enum GameState {
+    #[default]
+    Setup,
+    Playing,
+}
+
 fn main() {
     let res = WindowResolution::new(CONFIG.size.0 as f32, CONFIG.size.1 as f32);
 
@@ -32,22 +39,22 @@ fn main() {
             }),
             SandPlugin,
         ))
-        .add_systems(Startup, setup)
+        .add_state::<GameState>()
+        .add_systems(Startup, setup_camera)
+        .add_systems(OnEnter(GameState::Setup), setup)
+        .add_systems(OnExit(GameState::Playing), teardown)
         .add_systems(
             Update,
-            (
-                draw_viewport_rect,
-            ),
+            (draw_viewport_rect).run_if(in_state(GameState::Playing)),
         )
         .run();
 }
 
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    mut images: ResMut<Assets<Image>>,
-) {
+fn setup_camera(mut commands: Commands) {
+    commands.spawn((Camera2dBundle::default(), MainCamera));
+}
+
+fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>, mut next_state: ResMut<NextState<GameState>>) {
     let image = create_texture(&mut images);
     commands.spawn(SpriteBundle {
         sprite: Sprite {
@@ -58,7 +65,12 @@ fn setup(
         ..default()
     });
 
-    commands.spawn((Camera2dBundle::default(), MainCamera));
     commands.insert_resource(SandImage(image));
+    next_state.set(GameState::Playing);
+}
 
+fn teardown(mut commands: Commands, entities: Query<Entity, (Without<Camera>, Without<Window>)>) {
+    for entity in &entities {
+        commands.entity(entity).despawn();
+    }
 }
