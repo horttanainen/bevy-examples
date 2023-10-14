@@ -31,7 +31,7 @@ fn main() {
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
                     resolution: res,
-                    title: "GPU Compute Hello".to_string(),
+                    title: "Sand".to_string(),
                     resizable: false,
                     ..default()
                 }),
