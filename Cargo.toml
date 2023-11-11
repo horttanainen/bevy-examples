@@ -12,7 +12,8 @@ members = [
   "wgpu/depth",
   "bevy/hello",
   "bevy/gpucomputehello",
-  "bevy/sand"
+  "bevy/sand",
+  "bevy/snooker"
 ]
 
 resolver = "2"
