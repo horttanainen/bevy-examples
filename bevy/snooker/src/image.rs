@@ -1,11 +1,9 @@
-
 use bevy::{
     prelude::*,
-    render::{render_resource::*, texture::*, extract_resource::*, },
+    render::{extract_resource::*, render_resource::*, texture::*},
 };
 
 use crate::config::CONFIG;
-
 
 #[derive(Resource, Clone, Deref, ExtractResource)]
 pub struct GpuComputeImage(pub Handle<Image>);
@@ -23,7 +21,6 @@ pub fn create_texture(images: &mut Assets<Image>) -> Handle<Image> {
     );
     image.texture_descriptor.usage =
         TextureUsages::COPY_DST | TextureUsages::STORAGE_BINDING | TextureUsages::TEXTURE_BINDING;
-    image.sampler_descriptor = ImageSampler::nearest();
+    image.sampler = ImageSampler::nearest();
     images.add(image)
 }
-

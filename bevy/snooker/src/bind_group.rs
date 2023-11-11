@@ -21,11 +21,11 @@ pub fn queue_bind_group(
     cue_ball_buffer: ResMut<CueBallBuffer>,
     ball_buffer: ResMut<BallBuffer>,
 ) {
-    let view = &gpu_images[&hello_image.0];
-    let bind_group = render_device.create_bind_group(&BindGroupDescriptor {
-        label: None,
-        layout: &pipeline.texture_bind_group_layout,
-        entries: &[
+    let view = &gpu_images.get(&hello_image.0).unwrap();
+    let bind_group = render_device.create_bind_group(
+        None,
+        &pipeline.texture_bind_group_layout,
+        &[
             BindGroupEntry {
                 binding: 0,
                 resource: BindingResource::TextureView(&view.texture_view),
@@ -43,6 +43,6 @@ pub fn queue_bind_group(
                 resource: ball_buffer.0.as_entire_binding(),
             },
         ],
-    });
+    );
     commands.insert_resource(GpuComputeBindGroup(bind_group));
 }
