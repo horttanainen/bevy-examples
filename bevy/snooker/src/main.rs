@@ -82,11 +82,6 @@ fn setup(
     commands.insert_resource(CueBallPosition::default());
     commands.insert_resource(BallPositions::default());
 
-    let white = materials.add(ColorMaterial::from(Color::WHITE));
-    let wall_color = materials.add(ColorMaterial::from(CONFIG.wall_color));
-    let black = materials.add(ColorMaterial::from(CONFIG.wall_color));
-    let ball_color = materials.add(ColorMaterial::from(CONFIG.ball_color));
-
     commands
         .spawn(RigidBody::Fixed)
         .insert(Collider::ball(CONFIG.ball_radius))
@@ -94,7 +89,7 @@ fn setup(
             mesh: meshes
                 .add(shape::Circle::new(CONFIG.ball_radius).into())
                 .into(),
-            material: white.clone(),
+            material: materials.add(ColorMaterial::from(Color::WHITE)),
             transform: Transform::from_translation(Vec3::new(0.0, 0.0, 20.0)),
             ..default()
         })
@@ -105,7 +100,7 @@ fn setup(
             mesh: meshes
                 .add(shape::Box::new(CONFIG.size.0 as f32, CONFIG.wall_width, 1.0).into())
                 .into(),
-            material: wall_color.clone(),
+            material: materials.add(ColorMaterial::from(CONFIG.wall_color)),
             transform: Transform::from_translation(Vec3::new(
                 0.0,
                 (CONFIG.wall_width / 2.0) - (CONFIG.size.1 as f32) / 2.0,
@@ -117,11 +112,12 @@ fn setup(
     ));
 
     commands.spawn((
-        MaterialMesh2dBundle {
-            mesh: meshes
-                .add(shape::Box::new(CONFIG.size.0 as f32, CONFIG.wall_width, 1.0).into())
-                .into(),
-            material: wall_color.clone(),
+        SpriteBundle {
+            sprite: Sprite {
+                color: CONFIG.wall_color,
+                custom_size: Some(Vec2::new(CONFIG.size.0 as f32, CONFIG.wall_width)),
+                ..default()
+            },
             transform: Transform::from_translation(Vec3::new(
                 0.0,
                 -(CONFIG.wall_width / 2.0) + (CONFIG.size.1 as f32) / 2.0,
@@ -137,7 +133,7 @@ fn setup(
             mesh: meshes
                 .add(shape::Box::new(CONFIG.wall_width, CONFIG.size.1 as f32, 1.0).into())
                 .into(),
-            material: wall_color.clone(),
+            material: materials.add(ColorMaterial::from(CONFIG.wall_color)),
             transform: Transform::from_translation(Vec3::new(
                 -(CONFIG.wall_width / 2.0) + (CONFIG.size.0 as f32) / 2.0,
                 0.0,
@@ -153,7 +149,7 @@ fn setup(
             mesh: meshes
                 .add(shape::Box::new(CONFIG.wall_width, CONFIG.size.1 as f32, 1.0).into())
                 .into(),
-            material: wall_color,
+            material: materials.add(ColorMaterial::from(CONFIG.wall_color)),
             transform: Transform::from_translation(Vec3::new(
                 (CONFIG.wall_width / 2.0) - (CONFIG.size.0 as f32) / 2.0,
                 0.0,
@@ -174,7 +170,7 @@ fn setup(
                 mesh: meshes
                     .add(shape::Circle::new(CONFIG.pocket_radius).into())
                     .into(),
-                material: black.clone(),
+                material: materials.add(ColorMaterial::from(Color::BLACK)),
                 transform: Transform::from_translation(Vec3::new(
                     x,
                     (CONFIG.wall_width / 2.0) - (CONFIG.size.1 as f32) / 2.0,
@@ -190,7 +186,7 @@ fn setup(
                 mesh: meshes
                     .add(shape::Circle::new(CONFIG.pocket_radius).into())
                     .into(),
-                material: black.clone(),
+                material: materials.add(ColorMaterial::from(Color::BLACK)),
                 transform: Transform::from_translation(Vec3::new(
                     x,
                     -(CONFIG.wall_width / 2.0) + (CONFIG.size.1 as f32) / 2.0,
@@ -205,16 +201,18 @@ fn setup(
     for _ in 0..CONFIG.number_of_balls {
         let mut position = Vec3::new(random::<f32>() - 0.5, random::<f32>() - 0.5, 0.) * 500.;
         position.z = 20.;
-        commands.spawn((
-            MaterialMesh2dBundle {
+
+        commands
+            .spawn(RigidBody::Fixed)
+            .insert(Collider::ball(CONFIG.ball_radius))
+            .insert(MaterialMesh2dBundle {
                 mesh: meshes
                     .add(shape::Circle::new(CONFIG.ball_radius).into())
                     .into(),
-                material: ball_color.clone(),
+                material: materials.add(ColorMaterial::from(Color::RED)),
                 transform: Transform::from_translation(position),
                 ..default()
-            },
-            Ball,
-        ));
+            })
+            .insert(Ball);
     }
 }
