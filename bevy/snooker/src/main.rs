@@ -8,14 +8,12 @@ use cue_ball::{track_cue_ball_position, CueBall, CueBallPosition};
 use cursor::handle_cursor;
 use debug::draw_viewport_rect;
 use image::{create_texture, GpuComputeImage};
-use material_storage::StoredMaterials;
 use movement::move_cue_ball;
 use plugin::GpuComputePlugin;
 use pocket::Pocket;
 use rand::random;
 use wall::Wall;
 
-mod material_storage;
 mod ball;
 mod bind_group;
 mod camera;
@@ -83,17 +81,11 @@ fn setup(
     commands.insert_resource(GpuComputeImage(image));
     commands.insert_resource(CueBallPosition::default());
     commands.insert_resource(BallPositions::default());
-    
-    let yellow = materials.add(ColorMaterial::from(Color::YELLOW));
+
     let white = materials.add(ColorMaterial::from(Color::WHITE));
     let wall_color = materials.add(ColorMaterial::from(CONFIG.wall_color));
     let black = materials.add(ColorMaterial::from(CONFIG.wall_color));
     let ball_color = materials.add(ColorMaterial::from(CONFIG.ball_color));
-    let stored_materials = StoredMaterials {
-        yellow: yellow.clone()
-    };
-
-    commands.insert_resource(stored_materials);
 
     commands
         .spawn(RigidBody::Fixed)
@@ -103,7 +95,7 @@ fn setup(
                 .add(shape::Circle::new(CONFIG.ball_radius).into())
                 .into(),
             material: white.clone(),
-            transform: Transform::from_translation(Vec3::ONE),
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 20.0)),
             ..default()
         })
         .insert(CueBall);
@@ -117,7 +109,7 @@ fn setup(
             transform: Transform::from_translation(Vec3::new(
                 0.0,
                 (CONFIG.wall_width / 2.0) - (CONFIG.size.1 as f32) / 2.0,
-                2.0,
+                10.0,
             )),
             ..default()
         },
@@ -133,7 +125,7 @@ fn setup(
             transform: Transform::from_translation(Vec3::new(
                 0.0,
                 -(CONFIG.wall_width / 2.0) + (CONFIG.size.1 as f32) / 2.0,
-                2.0,
+                10.0,
             )),
             ..default()
         },
@@ -149,7 +141,7 @@ fn setup(
             transform: Transform::from_translation(Vec3::new(
                 -(CONFIG.wall_width / 2.0) + (CONFIG.size.0 as f32) / 2.0,
                 0.0,
-                2.0,
+                10.0,
             )),
             ..default()
         },
@@ -165,7 +157,7 @@ fn setup(
             transform: Transform::from_translation(Vec3::new(
                 (CONFIG.wall_width / 2.0) - (CONFIG.size.0 as f32) / 2.0,
                 0.0,
-                2.0,
+                10.0,
             )),
             ..default()
         },
@@ -186,7 +178,7 @@ fn setup(
                 transform: Transform::from_translation(Vec3::new(
                     x,
                     (CONFIG.wall_width / 2.0) - (CONFIG.size.1 as f32) / 2.0,
-                    3.0,
+                    15.0,
                 )),
                 ..default()
             },
@@ -202,7 +194,7 @@ fn setup(
                 transform: Transform::from_translation(Vec3::new(
                     x,
                     -(CONFIG.wall_width / 2.0) + (CONFIG.size.1 as f32) / 2.0,
-                    3.0,
+                    15.0,
                 )),
                 ..default()
             },
@@ -212,7 +204,7 @@ fn setup(
 
     for _ in 0..CONFIG.number_of_balls {
         let mut position = Vec3::new(random::<f32>() - 0.5, random::<f32>() - 0.5, 0.) * 500.;
-        position.z = 1.;
+        position.z = 20.;
         commands.spawn((
             MaterialMesh2dBundle {
                 mesh: meshes
