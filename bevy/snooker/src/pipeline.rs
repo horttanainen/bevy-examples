@@ -59,7 +59,7 @@ impl FromWorld for GpuComputePipeline {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
                             min_binding_size: BufferSize::new(
-                                (std::mem::size_of::<Vec4>() * CONFIG.number_of_balls) as u64,
+                                (std::mem::size_of::<Vec4>() * (CONFIG.number_of_balls as usize)) as u64,
                             ),
                         },
                         count: None,
@@ -67,6 +67,7 @@ impl FromWorld for GpuComputePipeline {
                 ],
             },
         );
+        let shader_defs = vec![ShaderDefVal::Int("NUMBER_OF_BALLS".into(), CONFIG.number_of_balls)];
         let shader = world.resource::<AssetServer>().load("shaders/snooker.wgsl");
         let pipeline_cache = world.resource::<PipelineCache>();
         let init_pipeline = pipeline_cache.queue_compute_pipeline(ComputePipelineDescriptor {
@@ -74,7 +75,7 @@ impl FromWorld for GpuComputePipeline {
             layout: vec![texture_bind_group_layout.clone()],
             push_constant_ranges: Vec::new(),
             shader: shader.clone(),
-            shader_defs: vec![],
+            shader_defs: shader_defs.clone(),
             entry_point: Cow::from("init"),
         });
         let update_pipeline = pipeline_cache.queue_compute_pipeline(ComputePipelineDescriptor {
@@ -82,7 +83,7 @@ impl FromWorld for GpuComputePipeline {
             layout: vec![texture_bind_group_layout.clone()],
             push_constant_ranges: Vec::new(),
             shader,
-            shader_defs: vec![],
+            shader_defs,
             entry_point: Cow::from("update"),
         });
 

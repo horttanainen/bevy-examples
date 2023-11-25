@@ -10,7 +10,7 @@ var<uniform> time: Time;
 @group(0) @binding(2)
 var<uniform> cue_ball_pos: vec2<f32>;
 
-const number_of_balls = 10;
+const number_of_balls = #NUMBER_OF_BALLS;
 @group(0) @binding(3)
 var<uniform> balls: array<vec4<f32>, number_of_balls>;
 
