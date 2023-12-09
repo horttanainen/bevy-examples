@@ -6,9 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-itertools = "0.10.3"
-
 bevy.workspace = true
+bytemuck.workspace = true
+
+itertools = "0.10.3"
 bevy-inspector-egui.workspace = true
 rand = "0.8.5"
 bevy_rapier3d = "0.23.0"

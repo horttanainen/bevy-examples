@@ -5,7 +5,7 @@ use bevy::{
     render::{render_resource::*, renderer::*},
 };
 
-use crate::config::CONFIG;
+use crate::{config::CONFIG, buffer_size::{TIME_BUFFER_SIZE, CUE_BALL_BUFFER_SIZE, BALL_BUFFER_SIZE}};
 
 #[derive(Resource)]
 pub struct GpuComputePipeline {
@@ -36,7 +36,7 @@ impl FromWorld for GpuComputePipeline {
                         ty: BindingType::Buffer {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
-                            min_binding_size: BufferSize::new(std::mem::size_of::<f32>() as u64),
+                            min_binding_size: BufferSize::new(TIME_BUFFER_SIZE),
                         },
                         count: None,
                     },
@@ -46,9 +46,7 @@ impl FromWorld for GpuComputePipeline {
                         ty: BindingType::Buffer {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
-                            min_binding_size: BufferSize::new(
-                                (std::mem::size_of::<Vec2>()) as u64,
-                            ),
+                            min_binding_size: BufferSize::new(CUE_BALL_BUFFER_SIZE),
                         },
                         count: None,
                     },
@@ -58,16 +56,17 @@ impl FromWorld for GpuComputePipeline {
                         ty: BindingType::Buffer {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
-                            min_binding_size: BufferSize::new(
-                                (std::mem::size_of::<Vec4>() * (CONFIG.number_of_balls as usize)) as u64,
-                            ),
+                            min_binding_size: BufferSize::new(BALL_BUFFER_SIZE),
                         },
                         count: None,
                     },
                 ],
             },
         );
-        let shader_defs = vec![ShaderDefVal::Int("NUMBER_OF_BALLS".into(), CONFIG.number_of_balls)];
+        let shader_defs = vec![ShaderDefVal::Int(
+            "NUMBER_OF_BALLS".into(),
+            CONFIG.number_of_balls,
+        )];
         let shader = world.resource::<AssetServer>().load("shaders/snooker.wgsl");
         let pipeline_cache = world.resource::<PipelineCache>();
         let init_pipeline = pipeline_cache.queue_compute_pipeline(ComputePipelineDescriptor {

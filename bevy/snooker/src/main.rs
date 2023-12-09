@@ -14,6 +14,7 @@ use pocket::Pocket;
 use rand::random;
 use wall::Wall;
 
+mod buffer_size;
 mod ball;
 mod bind_group;
 mod camera;

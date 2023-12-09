@@ -10,7 +10,7 @@ use crate::{
     image::GpuComputeImage,
     node::GpuComputeNode,
     pipeline::GpuComputePipeline,
-    time::{prepare_time, ExtractedTime, TimeMeta}, config::CONFIG,
+    time::{prepare_time, ExtractedTime, TimeMeta}, buffer_size::{TIME_BUFFER_SIZE, CUE_BALL_BUFFER_SIZE, BALL_BUFFER_SIZE},
 };
 
 pub struct GpuComputePlugin;
@@ -37,21 +37,21 @@ impl Plugin for GpuComputePlugin {
 
         let time_buffer = render_device.create_buffer(&BufferDescriptor {
             label: None,
-            size: std::mem::size_of::<f32>() as u64,
+            size: TIME_BUFFER_SIZE,
             usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
 
         let cue_ball_buffer = render_device.create_buffer(&BufferDescriptor {
             label: None,
-            size: (std::mem::size_of::<f32>() * 2) as u64,
+            size: CUE_BALL_BUFFER_SIZE,
             usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
 
         let ball_buffer = render_device.create_buffer(&BufferDescriptor {
             label: None,
-            size: (std::mem::size_of::<Vec4>() * (CONFIG.number_of_balls as usize)) as u64,
+            size: BALL_BUFFER_SIZE,
             usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });

@@ -1,12 +1,28 @@
 use bevy::{
     prelude::*,
-    render::{extract_resource::ExtractResource, render_resource::Buffer, renderer::RenderQueue},
+    render::{extract_resource::ExtractResource, render_resource::Buffer, renderer::RenderQueue}, core::{Pod, Zeroable},
 };
 
 use crate::camera::MainCamera;
 
+#[repr(C)]
+#[derive(Pod, Copy, Clone, Default)]
+pub struct BallStatus {
+    position: [f32; 4],
+    selected: i32
+}
+
+unsafe impl Zeroable for BallStatus {
+    fn zeroed() -> Self {
+        BallStatus {
+            position: [0., 0., 0., 0.],
+            selected: 0
+        }
+    }
+}
+
 #[derive(Resource, Default)]
-pub struct BallPositions(Vec<Vec4>);
+pub struct BallPositions(Vec<BallStatus>);
 
 impl ExtractResource for BallPositions {
     type Source = BallPositions;
@@ -34,7 +50,7 @@ pub fn track_ball_positions(
         let view_pos = camera
             .world_to_viewport(camera_transform, transform.translation)
             .unwrap();
-        ball_positions.0.push(Vec4::new(view_pos.x, view_pos.y, 0., 0.));
+        ball_positions.0.push(BallStatus { position: [view_pos.x, view_pos.y, 0., 0.], selected: 0});
     }
 }
 

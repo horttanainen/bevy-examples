@@ -4555,6 +4555,7 @@ dependencies = [
  "bevy 0.12.0",
  "bevy-inspector-egui",
  "bevy_rapier3d",
+ "bytemuck",
  "itertools",
  "rand",
 ]
