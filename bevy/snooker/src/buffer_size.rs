@@ -2,7 +2,7 @@ use crate::config::CONFIG;
 
 
 
-pub const BALL_BUFFER_SIZE: u64 = ((std::mem::size_of::<[f32; 4]>() + std::mem::size_of::<i32>())
+pub const BALL_BUFFER_SIZE: u64 = ((std::mem::size_of::<[f32; 3]>() + std::mem::size_of::<i32>())
                                     * CONFIG.number_of_balls as usize)
                                     as u64;
 

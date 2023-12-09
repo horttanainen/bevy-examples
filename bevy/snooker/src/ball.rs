@@ -8,14 +8,14 @@ use crate::camera::MainCamera;
 #[repr(C)]
 #[derive(Pod, Copy, Clone, Default)]
 pub struct BallStatus {
-    position: [f32; 4],
+    position: [f32; 3],
     selected: i32
 }
 
 unsafe impl Zeroable for BallStatus {
     fn zeroed() -> Self {
         BallStatus {
-            position: [0., 0., 0., 0.],
+            position: [0., 0., 0.],
             selected: 0
         }
     }
@@ -50,7 +50,7 @@ pub fn track_ball_positions(
         let view_pos = camera
             .world_to_viewport(camera_transform, transform.translation)
             .unwrap();
-        ball_positions.0.push(BallStatus { position: [view_pos.x, view_pos.y, 0., 0.], selected: 0});
+        ball_positions.0.push(BallStatus { position: [view_pos.x, view_pos.y, 0.], selected: 0});
     }
 }
 

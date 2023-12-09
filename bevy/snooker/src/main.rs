@@ -12,8 +12,10 @@ use movement::move_cue_ball;
 use plugin::GpuComputePlugin;
 use pocket::Pocket;
 use rand::random;
+use selection::{Selection, highlight_selected};
 use wall::Wall;
 
+mod selection;
 mod buffer_size;
 mod ball;
 mod bind_group;
@@ -55,6 +57,7 @@ fn main() {
                 move_cue_ball,
                 handle_cursor,
                 track_cue_ball_position,
+                highlight_selected,
                 track_ball_positions,
                 draw_viewport_rect,
             ),
@@ -94,7 +97,8 @@ fn setup(
             transform: Transform::from_translation(Vec3::new(0.0, 0.0, 20.0)),
             ..default()
         })
-        .insert(CueBall);
+        .insert(CueBall)
+        .insert(Selection { selected: false});
 
     commands.spawn((
         MaterialMesh2dBundle {
@@ -180,7 +184,8 @@ fn setup(
                 ..default()
             },
             Pocket,
-        ));
+        ))
+        .insert(Selection { selected: false});
 
         commands.spawn((
             MaterialMesh2dBundle {
@@ -196,7 +201,8 @@ fn setup(
                 ..default()
             },
             Pocket,
-        ));
+        ))
+        .insert(Selection { selected: false});
     }
 
     for _ in 0..CONFIG.number_of_balls {
@@ -214,6 +220,7 @@ fn setup(
                 transform: Transform::from_translation(position),
                 ..default()
             })
-            .insert(Ball);
+            .insert(Ball)
+            .insert(Selection { selected: false});
     }
 }

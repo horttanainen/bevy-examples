@@ -10,9 +10,14 @@ var<uniform> time: Time;
 @group(0) @binding(2)
 var<uniform> cue_ball_pos: vec2<f32>;
 
+struct BallStatus {
+   position: vec3<f32>,
+   selected: i32
+};
+
 const number_of_balls = #NUMBER_OF_BALLS;
 @group(0) @binding(3)
-var<uniform> balls: array<vec4<f32>, number_of_balls>;
+var<uniform> balls: array<BallStatus, number_of_balls>;
 
 const baize = vec4<f32>(0.0, 1.0, 0.0, 1.0);
 
@@ -65,7 +70,8 @@ fn update(@builtin(global_invocation_id) invocation_id: vec3<u32>) {
 
     var visible = true;
     for (var i: i32 = 0; i < number_of_balls; i++) {
-      if (!is_visible(cue_ball_pos, balls[i].xy, vec2<f32>(coordinate))) {
+      let ball_pos = balls[i].position.xy;
+      if (!is_visible(cue_ball_pos, ball_pos, vec2<f32>(coordinate))) {
         visible = false;
         break;
       }
