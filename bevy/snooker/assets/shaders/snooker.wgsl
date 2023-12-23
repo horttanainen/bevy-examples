@@ -40,6 +40,42 @@ fn hash(value: u32) -> u32 {
     return state;
 }
 
+fn pocketIsSelected() -> bool {
+  for (var i: i32 = 0; i < 6; i++) {
+    if (bool(pockets[i].selected)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+fn findSelectedPocketPosition() -> vec2<f32> {
+  for (var i: i32 = 0; i < 6; i++) {
+    if (bool(pockets[i].selected)) {
+      return pockets[i].position.xy;
+    }
+  }
+  return vec2<f32>(0.0,0.0);
+}
+
+fn ballIsSelected() -> bool {
+  for (var i: i32 = 0; i < number_of_balls; i++) {
+    if (bool(balls[i].selected)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+fn findSelectedBallPosition() -> vec2<f32> {
+  for (var i: i32 = 0; i < number_of_balls; i++) {
+    if (bool(balls[i].selected)) {
+      return balls[i].position.xy;
+    }
+  }
+  return vec2<f32>(0.0,0.0);
+}
+
 fn randomFloat(value: u32) -> f32 {
     return f32(hash(value)) / 4294967295.0;
 }
@@ -76,21 +112,31 @@ fn update(@builtin(global_invocation_id) invocation_id: vec3<u32>) {
 
     let distance_from_cue_ball = distance(vec2<f32>(coordinate), cue_ball_pos) / 1280.0;
 
-    var visible = true;
-    for (var i: i32 = 0; i < number_of_balls; i++) {
-      let ball_pos = balls[i].position.xy;
-      if (!is_visible(cue_ball_pos, ball_pos, vec2<f32>(coordinate))) {
-        visible = false;
-        break;
-      }
-    }
+    storageBarrier();
 
     var color = baize;
-    if (visible) {
-      color = vec4<f32>(1.0 - distance_from_cue_ball, 1.0 - (distance_from_cue_ball / 3.0), 0.0, 1.0);
+    if (!ballIsSelected()) {
+      textureStore(texture, coordinate, color);
+      return;
     }
 
-    storageBarrier();
+    if (!pocketIsSelected()) {
+      textureStore(texture, coordinate, color);
+      return;
+    }
+
+    let selected_ball_position = findSelectedBallPosition();
+    let distance_from_selected_ball = distance(vec2<f32>(coordinate), selected_ball_position);
+    let selected_pocket_position = findSelectedPocketPosition();
+
+
+    let distance_from_cue_ball_to_selected_ball = distance(cue_ball_pos, selected_ball_position);
+    let distance_from_selected_ball_to_pocket = distance(selected_ball_position, selected_pocket_position);
+    let distance_from_selected_pocket = distance(vec2<f32>(coordinate), selected_pocket_position);
+
+    let distance_from_cue_ball_to_pixel_via_selected_ball_and_pocket = distance_from_cue_ball_to_selected_ball + distance_from_selected_ball_to_pocket + distance_from_selected_pocket;
+
+    color = vec4<f32>(distance_from_cue_ball_to_pixel_via_selected_ball_and_pocket / (1280.0 * 2.0), 0.0, 0.0, 1.0);
 
     textureStore(texture, coordinate, color);
 }
