@@ -1,4 +1,4 @@
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle, window::PrimaryWindow};
+use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_rapier3d::prelude::{QueryFilter, RapierContext};
 
 use crate::{camera::MainCamera, selection::{select, Selection, de_select}};

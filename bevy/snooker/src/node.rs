@@ -71,14 +71,14 @@ impl render_graph::Node for GpuComputeNode {
                     .get_compute_pipeline(pipeline.init_pipeline)
                     .unwrap();
                 pass.set_pipeline(init_pipeline);
-                pass.dispatch_workgroups(CONFIG.size.0 / CONFIG.workgroup_size, CONFIG.size.1 / CONFIG.workgroup_size, 1);
+                pass.dispatch_workgroups(CONFIG.table_size.x as u32 / CONFIG.workgroup_size, CONFIG.table_size.y as u32 / CONFIG.workgroup_size, 1);
             }
             HelloState::Update => {
                 let update_pipeline = pipeline_cache
                     .get_compute_pipeline(pipeline.update_pipeline)
                     .unwrap();
                 pass.set_pipeline(update_pipeline);
-                pass.dispatch_workgroups(CONFIG.size.0 / CONFIG.workgroup_size, CONFIG.size.1 / CONFIG.workgroup_size, 1);
+                pass.dispatch_workgroups(CONFIG.table_size.x as u32/ CONFIG.workgroup_size, CONFIG.table_size.y as u32 / CONFIG.workgroup_size, 1);
             }
         }
 

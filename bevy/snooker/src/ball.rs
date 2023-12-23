@@ -1,9 +1,11 @@
 use bevy::{
     prelude::*,
-    render::{extract_resource::ExtractResource, render_resource::Buffer, renderer::RenderQueue}, core::{Pod, Zeroable},
+    render::{extract_resource::ExtractResource, render_resource::Buffer, renderer::RenderQueue}, core::{Pod, Zeroable}, sprite::MaterialMesh2dBundle,
 };
+use bevy_rapier3d::prelude::{RigidBody, Collider};
+use rand::random;
 
-use crate::camera::MainCamera;
+use crate::{camera::MainCamera, config::CONFIG, selection::Selection};
 
 #[repr(C)]
 #[derive(Pod, Copy, Clone, Default)]
@@ -64,4 +66,29 @@ pub fn prepare_balls(
         0,
         bevy::core::cast_slice(&ball_positions.0),
     );
+}
+
+pub fn setup_balls(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    for _ in 0..CONFIG.number_of_balls {
+        let mut position = Vec3::new(random::<f32>() - 0.5, random::<f32>() - 0.5, 0.) * 500.;
+        position.z = 20.;
+
+        commands
+            .spawn(RigidBody::Fixed)
+            .insert(Collider::ball(CONFIG.ball_radius))
+            .insert(MaterialMesh2dBundle {
+                mesh: meshes
+                    .add(shape::Circle::new(CONFIG.ball_radius).into())
+                    .into(),
+                material: materials.add(ColorMaterial::from(Color::RED)),
+                transform: Transform::from_translation(position),
+                ..default()
+            })
+            .insert(Ball)
+            .insert(Selection { selected: false});
+    }
 }
