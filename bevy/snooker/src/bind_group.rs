@@ -5,7 +5,7 @@ use bevy::{
 
 use crate::{
     ball::BallBuffer, cue_ball::CueBallBuffer, image::GpuComputeImage,
-    pipeline::GpuComputePipeline, time::TimeMeta,
+    pipeline::GpuComputePipeline, time::TimeMeta, pocket::PocketBuffer,
 };
 
 #[derive(Resource)]
@@ -20,6 +20,7 @@ pub fn queue_bind_group(
     time_meta: ResMut<TimeMeta>,
     cue_ball_buffer: ResMut<CueBallBuffer>,
     ball_buffer: ResMut<BallBuffer>,
+    pocket_buffer: ResMut<PocketBuffer>,
 ) {
     let view = &gpu_images.get(&hello_image.0).unwrap();
     let bind_group = render_device.create_bind_group(
@@ -41,6 +42,10 @@ pub fn queue_bind_group(
             BindGroupEntry {
                 binding: 3,
                 resource: ball_buffer.0.as_entire_binding(),
+            },
+            BindGroupEntry {
+                binding: 4,
+                resource: pocket_buffer.0.as_entire_binding(),
             },
         ],
     );

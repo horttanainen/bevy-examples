@@ -19,6 +19,14 @@ const number_of_balls = #NUMBER_OF_BALLS;
 @group(0) @binding(3)
 var<uniform> balls: array<BallStatus, number_of_balls>;
 
+struct PocketStatus {
+   position: vec3<f32>,
+   selected: i32
+};
+
+@group(0) @binding(4)
+var<uniform> pockets: array<PocketStatus, 6>;
+
 const baize = vec4<f32>(0.0, 1.0, 0.0, 1.0);
 
 fn hash(value: u32) -> u32 {

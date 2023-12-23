@@ -5,7 +5,7 @@ use bevy::{
     render::{render_resource::*, renderer::*},
 };
 
-use crate::{config::CONFIG, buffer_size::{TIME_BUFFER_SIZE, CUE_BALL_BUFFER_SIZE, BALL_BUFFER_SIZE}};
+use crate::{config::CONFIG, buffer_size::{TIME_BUFFER_SIZE, CUE_BALL_BUFFER_SIZE, BALL_BUFFER_SIZE, POCKET_BUFFER_SIZE}};
 
 #[derive(Resource)]
 pub struct GpuComputePipeline {
@@ -57,6 +57,16 @@ impl FromWorld for GpuComputePipeline {
                             ty: BufferBindingType::Uniform,
                             has_dynamic_offset: false,
                             min_binding_size: BufferSize::new(BALL_BUFFER_SIZE),
+                        },
+                        count: None,
+                    },
+                    BindGroupLayoutEntry {
+                        binding: 4,
+                        visibility: ShaderStages::COMPUTE,
+                        ty: BindingType::Buffer {
+                            ty: BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: BufferSize::new(POCKET_BUFFER_SIZE),
                         },
                         count: None,
                     },

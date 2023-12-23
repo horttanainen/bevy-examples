@@ -10,7 +10,7 @@ use crate::{
     image::GpuComputeImage,
     node::GpuComputeNode,
     pipeline::GpuComputePipeline,
-    time::{prepare_time, ExtractedTime, TimeMeta}, buffer_size::{TIME_BUFFER_SIZE, CUE_BALL_BUFFER_SIZE, BALL_BUFFER_SIZE},
+    time::{prepare_time, ExtractedTime, TimeMeta}, buffer_size::{TIME_BUFFER_SIZE, CUE_BALL_BUFFER_SIZE, BALL_BUFFER_SIZE, POCKET_BUFFER_SIZE}, pocket::{PocketPositions, prepare_pockets, PocketBuffer},
 };
 
 pub struct GpuComputePlugin;
@@ -20,12 +20,14 @@ impl Plugin for GpuComputePlugin {
         app.add_plugins(ExtractResourcePlugin::<GpuComputeImage>::default())
             .add_plugins(ExtractResourcePlugin::<ExtractedTime>::default())
             .add_plugins(ExtractResourcePlugin::<CueBallPosition>::default())
-            .add_plugins(ExtractResourcePlugin::<BallPositions>::default());
+            .add_plugins(ExtractResourcePlugin::<BallPositions>::default())
+            .add_plugins(ExtractResourcePlugin::<PocketPositions>::default());
         let render_app = app.sub_app_mut(RenderApp);
         render_app.add_systems(Render, queue_bind_group.in_set(RenderSet::Queue));
         render_app.add_systems(Render, prepare_time.in_set(RenderSet::Prepare));
         render_app.add_systems(Render, prepare_cue_ball.in_set(RenderSet::Prepare));
         render_app.add_systems(Render, prepare_balls.in_set(RenderSet::Prepare));
+        render_app.add_systems(Render, prepare_pockets.in_set(RenderSet::Prepare));
 
         let mut render_graph = render_app.world.resource_mut::<RenderGraph>();
         render_graph.add_node("hello_node", GpuComputeNode::default());
@@ -56,6 +58,13 @@ impl Plugin for GpuComputePlugin {
             mapped_at_creation: false,
         });
 
+        let pocket_buffer = render_device.create_buffer(&BufferDescriptor {
+            label: None,
+            size: POCKET_BUFFER_SIZE,
+            usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
         let render_app = app.sub_app_mut(RenderApp);
         render_app
             .init_resource::<GpuComputePipeline>()
@@ -63,6 +72,7 @@ impl Plugin for GpuComputePlugin {
                 buffer: time_buffer,
             })
             .insert_resource(CueBallBuffer(cue_ball_buffer))
-            .insert_resource(BallBuffer(ball_buffer));
+            .insert_resource(BallBuffer(ball_buffer))
+            .insert_resource(PocketBuffer(pocket_buffer));
     }
 }

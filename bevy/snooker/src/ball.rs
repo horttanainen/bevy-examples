@@ -41,18 +41,18 @@ pub struct Ball;
 pub struct BallBuffer(pub Buffer);
 
 pub fn track_ball_positions(
-    balls: Query<(&mut Transform, With<Ball>)>,
+    balls: Query<(&mut Transform, &Selection, With<Ball>)>,
     mut ball_positions: ResMut<BallPositions>,
     camera_q: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
 ) {
     let (camera, camera_transform) = camera_q.single();
     ball_positions.0.clear();
 
-    for (transform, _) in &balls {
+    for (transform, selection, _) in &balls {
         let view_pos = camera
             .world_to_viewport(camera_transform, transform.translation)
             .unwrap();
-        ball_positions.0.push(BallStatus { position: [view_pos.x, view_pos.y, 0.], selected: 0});
+        ball_positions.0.push(BallStatus { position: [view_pos.x, view_pos.y, 0.], selected: selection.selected as i32});
     }
 }
 

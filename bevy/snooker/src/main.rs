@@ -10,7 +10,7 @@ use debug::draw_viewport_rect;
 use image::setup_image;
 use movement::move_cue_ball;
 use plugin::GpuComputePlugin;
-use pocket::setup_pockets;
+use pocket::{setup_pockets, PocketPositions, track_pocket_selection};
 use selection::highlight_selected;
 use wall::setup_walls;
 
@@ -58,6 +58,7 @@ fn main() {
                 track_cue_ball_position,
                 highlight_selected,
                 track_ball_positions,
+                track_pocket_selection,
                 draw_viewport_rect,
             ),
         )
@@ -70,4 +71,5 @@ fn setup(
     commands.spawn((Camera2dBundle::default(), MainCamera));
     commands.insert_resource(CueBallPosition::default());
     commands.insert_resource(BallPositions::default());
+    commands.insert_resource(PocketPositions::default());
 }
