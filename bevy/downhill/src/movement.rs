@@ -1,33 +1,32 @@
-use std::f32::consts::PI;
-
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
-use crate::{planet::Planet, player::Player};
+use crate::{player::Player, velocity::NonZeroSurfaceVelocity, planet::Planet};
 
 pub fn move_player(
-    mut ext_forces_q: Query<(&mut ExternalForce, &Velocity, &Transform), With<Player>>,
+    mut ext_forces_q: Query<(&mut ExternalForce, &Transform), With<Player>>,
     planet_center_q: Query<&Transform, With<Planet>>,
     input: Res<Input<KeyCode>>,
-    time: Res<Time>,
+    surface_velocity: Res<NonZeroSurfaceVelocity>,
 ) {
-    let (mut external_force, velocity, player_transform) = ext_forces_q.single_mut();
-    let planet_center_transform = planet_center_q.single();
+    let (mut external_force, player_transform) = ext_forces_q.single_mut();
+    let planet_center = planet_center_q.single();
 
-    let up = (player_transform.translation - planet_center_transform.translation).normalize();
+    let up = (player_transform.translation - planet_center.translation).normalize();
+    let perpendicular = up.cross(surface_velocity.0).normalize();
 
-    let quat = Quat::from_axis_angle(up, 0. * PI);
-
-    let mut controlled_direction = Vec3::ZERO;
+    let force_multiplier = 1000.0;
 
     if input.pressed(KeyCode::W) {
-        controlled_direction.z = -1.;
+        external_force.force += surface_velocity.0 * force_multiplier;
     } else if input.pressed(KeyCode::S) {
-        controlled_direction.z = 1.;
+        external_force.force -= surface_velocity.0 * force_multiplier;
     }
+
     if input.pressed(KeyCode::D) {
-        controlled_direction.x = 1.;
+        external_force.force -= perpendicular * force_multiplier;
     } else if input.pressed(KeyCode::A) {
-        controlled_direction.x = -1.;
+        external_force.force += perpendicular * force_multiplier;
     }
+
 }

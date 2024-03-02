@@ -1,7 +1,6 @@
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
 
-use crate::{player::Player, planet::Planet};
+use crate::{player::Player, planet::Planet, velocity::SurfaceVelocity};
 
 #[derive(Component)]
 pub struct MainCamera;
@@ -17,21 +16,18 @@ pub fn setup_camera(mut commands: Commands) {
 
 pub fn move_camera(
     mut camera_q: Query<&mut Transform, With<MainCamera>>,
-    player_q: Query<(&Transform, &Velocity), (With<Player>, Without<MainCamera>)>,
+    player_q: Query<&Transform, (With<Player>, Without<MainCamera>)>,
     planet_center_q: Query<&Transform, (With<Planet>, Without<MainCamera>)>,
+    surface_velocity: Res<SurfaceVelocity>
 ) {
     let mut transform = camera_q.single_mut();
-    let (player_transform, player_velocity) = player_q.single();
+    let player_transform = player_q.single();
     let planet_center = planet_center_q.single();
 
     let up = (transform.translation - planet_center.translation).normalize();
     let distance_to_player = Vec3::distance(transform.translation, player_transform.translation);
-    let (planet_tangent_1, planet_tangent_2) = up.any_orthonormal_pair();
 
-    let player_surface_velocity_1 = player_velocity.linvel.project_onto(planet_tangent_1);
-    let player_surface_velocity_2 = player_velocity.linvel.project_onto(planet_tangent_2);
-    let player_surface_velocity = player_surface_velocity_1 + player_surface_velocity_2;
-
+    let player_surface_velocity = &surface_velocity.0;
 
     if player_surface_velocity.length() > 2.0 {
         let camera_behind_player = player_surface_velocity.normalize() * 10.0;

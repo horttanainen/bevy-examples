@@ -16,7 +16,7 @@ pub fn setup_planet(
         .insert(Collider::ball(CONFIG.planet_radius))
         .insert(ColliderMassProperties::Density(10.0))
         .insert(PbrBundle {
-            mesh: meshes.add(shape::Icosphere{radius: CONFIG.planet_radius, subdivisions: 1}.try_into().unwrap()),
+            mesh: meshes.add(shape::Icosphere{radius: CONFIG.planet_radius, subdivisions: 5}.try_into().unwrap()),
             material: materials.add(Color::SEA_GREEN.into()),
             transform: Transform::from_translation(CONFIG.planet_center),
             ..default()
