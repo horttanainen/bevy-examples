@@ -28,10 +28,8 @@ pub fn setup_player(
         .insert(PbrBundle {
             mesh: meshes.add(shape::Capsule::default().into()),
             material: materials.add(Color::RED.into()),
-            transform: Transform::from_translation(CONFIG.planet_center + CONFIG.planet_radius + 20.0),
+            transform: Transform::from_translation(Vec3::new(0., 0., CONFIG.planet_radius + 5.)),
             ..default()
         })
         .insert(Player);
 }
-
-
