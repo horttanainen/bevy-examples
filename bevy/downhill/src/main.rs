@@ -9,6 +9,7 @@ use lighting::setup_lighting;
 use movement::move_player;
 use planet::setup_planet;
 use player::setup_player;
+use stars::setup_stars;
 use velocity::calculate_surface_velocity;
 use velocity::setup_surface_velocity;
 
@@ -21,6 +22,7 @@ mod movement;
 mod planet;
 mod player;
 mod velocity;
+mod stars;
 
 fn main() {
     App::new()
@@ -30,6 +32,7 @@ fn main() {
         .add_systems(Startup, setup_surface_velocity)
         .add_systems(Startup, setup_directions)
         .add_systems(Startup, setup_planet)
+        .add_systems(Startup, setup_stars)
         .add_systems(Startup, setup_player)
         .add_systems(Startup, setup_camera)
         .add_systems(Startup, setup_lighting)
