@@ -2,19 +2,14 @@ license = "MIT OR Apache-2.0"
 
 [workspace]
 members = [
-  "wgpu/dependencies",
-  "wgpu/surface",
-  "wgpu/pipeline",
-  "wgpu/buffers",
-  "wgpu/textures",
-  "wgpu/camera",
-  "wgpu/instancing",
-  "wgpu/depth",
-  "bevy/hello",
-  "bevy/gpucomputehello",
-  "bevy/sand",
-  "bevy/snooker",
-  "bevy/downhill"
+  "dependencies",
+  "surface",
+  "pipeline",
+  "buffers",
+  "textures",
+  "camera",
+  "instancing",
+  "depth",
 ]
 
 resolver = "2"
@@ -26,13 +21,7 @@ opt-level = 1
 [profile.dev.package."*"]
 opt-level = 3
 
-
 [workspace.dependencies]
-bevy = { version = "0.12.1", features = ["dynamic_linking"] }
-bevy-inspector-egui = "0.18.1"
-bevy_asset_loader = "0.17.0"
-bevy_rapier3d = { version = "0.23.0", features = [ "simd-stable", "debug-render-3d" ] }
-
 env_logger = "0.10.0"
 wgpu = "0.15.1"
 winit = "0.28.3"

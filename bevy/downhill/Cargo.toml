@@ -9,3 +9,4 @@ edition = "2021"
 bevy.workspace = true
 bytemuck.workspace = true
 bevy_rapier3d.workspace = true
+rand.workspace = true
