@@ -5,6 +5,7 @@ use camera::setup_camera;
 use directions::calculate_directions;
 use directions::setup_directions;
 use gravity::apply_gravity;
+use lighting::move_spotlight;
 use lighting::setup_lighting;
 use movement::move_player;
 use planet::setup_planet;
@@ -44,6 +45,7 @@ fn main() {
                 apply_gravity,
                 calculate_surface_velocity,
                 move_camera,
+               move_spotlight 
             ),
         )
         .run();

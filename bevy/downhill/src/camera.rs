@@ -10,7 +10,7 @@ pub struct MainCamera;
 pub fn setup_camera(mut commands: Commands) {
     commands
         .spawn(Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 50., 400.0).looking_at(Vec3::ZERO, Vec3::Y),
+            transform: Transform::from_xyz(0.0, 0.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
             ..Default::default()
         })
         .insert(MainCamera);
@@ -30,16 +30,17 @@ pub fn move_camera(
 
     let player_surface_velocity = &surface_velocity.0;
 
+
     let max_visible_speed = 30.;
-    let min_horizontal_camera_distance = 5.;
-    let max_horizontal_camera_distance = 10.;
+    let min_horizontal_camera_distance = 10.;
+    let max_horizontal_camera_distance = 20.;
 
     let max_visible_elevation = 30.;
-    let min_vertical_camera_distance = 2.;
-    let max_vertical_camera_distance = 5.;
+    let min_vertical_camera_distance = 0.;
+    let max_vertical_camera_distance = 1.;
 
     let from_surface_to_player = player_transform.translation - direction.planet_center;
-    let elevation = from_surface_to_player.length() - CONFIG.planet_radius;
+    let elevation = CONFIG.planet_radius - from_surface_to_player.length();
 
     let above_player = direction.player_up
         * f32::max(
@@ -64,5 +65,5 @@ pub fn move_camera(
         camera_transform.translation = player_transform.translation + above_player;
     }
 
-    camera_transform.look_at(player_transform.translation, direction.player_up);
+    camera_transform.look_at(player_transform.translation + direction.player_up * 2.0, direction.player_up);
 }

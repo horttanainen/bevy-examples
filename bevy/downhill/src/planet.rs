@@ -12,7 +12,7 @@ pub fn setup_planet(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let ball_shape = SharedShape::ball(CONFIG.planet_radius);
-    let (vertices, indices) = ball_shape.as_ball().unwrap().to_trimesh(10, 10);
+    let (vertices, indices) = ball_shape.as_ball().unwrap().to_trimesh(20, 20);
 
     let reversed_indices: Vec<[u32; 3]> = indices.into_iter().map(|x| [x[2], x[1], x[0]]).collect();
 
@@ -40,7 +40,6 @@ pub fn setup_planet(
     commands
         .spawn(RigidBody::Fixed)
         .insert(collider_reversed_incides)
-        .insert(ColliderMassProperties::Density(10.0))
         .insert(PbrBundle {
             mesh: meshes.add(mesh),
             material: materials.add(StandardMaterial {
@@ -54,3 +53,4 @@ pub fn setup_planet(
         })
         .insert(Planet);
 }
+

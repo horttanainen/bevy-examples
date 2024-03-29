@@ -9,9 +9,9 @@ pub struct Config {
 }
 
 pub const CONFIG: Config = Config {
-    planet_radius: 200.,
+    planet_radius: 400.,
     planet_center: Vec3::ZERO,
     player_mass: 100.0,
     gravity: 9.81,
-    number_of_stars: 1000
+    number_of_stars: 100
 };
